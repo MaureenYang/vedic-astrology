@@ -11,6 +11,7 @@
 - `js/vargas.js`：16 張分盤規則；`js/dasha.js`：Vimshottari 五層；`js/time.js`：時區換算
 - `js/render.js`：南印度式／北印度式 SVG 盤面
 - `js/cities.js`：城市資料（產生後的靜態檔）
+- `js/export.js`：把命盤整理成 Excel 工作表；`js/xlsx.js`：不依賴外部套件的 XLSX 產生器（瀏覽器內建 CompressionStream 壓縮）
 - `vendor/swisseph/`：Swiss Ephemeris WebAssembly（`@swisseph/browser` 1.4.0，AGPL），Moshier 星曆
 - `tests/`：`node tests/compare-sample.mjs` 與使用者範例檔比對
 

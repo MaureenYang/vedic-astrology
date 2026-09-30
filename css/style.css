@@ -65,6 +65,8 @@ input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0;
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tabs button, .chip { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 5px 13px; cursor: pointer; }
 .tabs button.on, .chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tools { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.btn:disabled { opacity: .6; cursor: wait; }
 .style { display: flex; gap: 12px; font-size: 13px; }
 .style label { display: flex; gap: 4px; align-items: center; cursor: pointer; }
 

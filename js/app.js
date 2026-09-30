@@ -4,6 +4,7 @@ import { children, currentPath, LEVEL_NAMES } from './dasha.js';
 import { drawChart } from './render.js';
 import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js';
 import { CITIES } from './cities.js';
+import { exportXlsx } from './export.js';
 import {
   SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
 } from './constants.js';
@@ -358,6 +359,20 @@ function init() {
   document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
   $('#form').addEventListener('submit', (e) => { e.preventDefault(); run(); });
   $('#ayanamsa').addEventListener('change', () => chart && run());
+  $('#exportBtn').addEventListener('click', async () => {
+    if (!chart) return;
+    const btn = $('#exportBtn');
+    btn.disabled = true; btn.textContent = '產生中…';
+    try {
+      const { blob, name } = await exportXlsx(chart);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { a.remove(); URL.revokeObjectURL(a.href); }, 10000);
+    } catch (e) {
+      alert('匯出失敗：' + e.message);
+    } finally { btn.disabled = false; btn.textContent = '匯出 Excel'; }
+  });
   $('#manualToggle').addEventListener('click', () => { const m = $('#manual'); m.hidden = !m.hidden; });
   document.querySelectorAll('input[name=style]').forEach((r) => {
     r.checked = r.value === state.style;
