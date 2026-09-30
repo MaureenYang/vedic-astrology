@@ -26,3 +26,8 @@
 - 範例檔大運日期為 UT 日期；本站顯示當地時間到分鐘
 
 修改計算時，先跑 `node tests/compare-sample.mjs` 確認沒有退步。
+
+## 發布前
+
+修改任何 `index.html`、`css/`、`js/` 後，commit 前執行 `node scripts/bump-version.mjs` 更新快取版本號，
+否則使用者的瀏覽器可能繼續用舊檔案。

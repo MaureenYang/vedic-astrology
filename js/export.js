@@ -1,8 +1,8 @@
 // 把命盤整理成 Excel 工作表（方便交給 Claude 或其他工具解讀）
-import { children, currentPath, LEVEL_NAMES } from './dasha.js';
-import { fmtLocal, fmtOffset, msToJd } from './time.js';
-import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js';
-import { makeXlsx } from './xlsx.js';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202609301609';
+import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202609301609';
+import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202609301609';
+import { makeXlsx } from './xlsx.js?v=202609301609';
 
 const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);

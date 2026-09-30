@@ -3,9 +3,9 @@ import {
   SIGN_LORD, EXALT_SIGN, DEBIL_SIGN, DEEP_EXALT, OWN_SIGNS, MOOLATRIKONA, NATURAL, COMBUST, MEAN_MOTION,
   NAKSHATRAS, NAK_SPAN, NAISARGIKA, REQUIRED_BALA, SWE_BODY, SWE_MEAN_NODE, DASHA_ORDER,
   SU, MO, MA, ME, JU, VE, SA, RA, KE, SEVEN, norm, signOf, degIn, angDist, houseFrom, isOddSign,
-} from './constants.js';
-import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js';
-import { mahadashas } from './dasha.js';
+} from './constants.js?v=202609301609';
+import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js?v=202609301609';
+import { mahadashas } from './dasha.js?v=202609301609';
 
 const FLG_MOSEPH = 4, FLG_SPEED = 256, FLG_EQUATORIAL = 2048, FLG_SIDEREAL = 65536;
 const rad = Math.PI / 180;
