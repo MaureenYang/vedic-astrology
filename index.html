@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>吠陀占星排盤</title>
+<meta name="description" content="輸入出生時間與地點，排出吠陀占星（Jyotish）命盤：16 張分盤、Shadbala、Vimshottari 大運到 Prana。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☸</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>吠陀占星排盤</h1>
+    <p>Jyotish・恆星黃道・Swiss Ephemeris 計算</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <form id="form" class="card" autocomplete="off">
+    <div class="grid">
+      <label>出生日期
+        <input type="date" id="date" required min="1800-01-01" max="2200-12-31">
+      </label>
+      <label>出生時間（當地時間）
+        <input type="time" id="time" required step="1">
+      </label>
+      <fieldset class="gender">
+        <legend>性別</legend>
+        <label><input type="radio" name="gender" value="F" checked> 女</label>
+        <label><input type="radio" name="gender" value="M"> 男</label>
+      </fieldset>
+      <label>Ayanamsa
+        <select id="ayanamsa"></select>
+      </label>
+      <div class="placebox">
+        <label for="place">出生地</label>
+        <input id="place" type="search" placeholder="輸入城市或鄉鎮，例如：台中、板橋、Tokyo" role="combobox" aria-controls="placeList" aria-autocomplete="list">
+        <ul id="placeList" class="placelist" role="listbox" hidden></ul>
+        <div class="placeinfo"><span id="placeInfo"></span> <button type="button" class="link" id="manualToggle">手動輸入經緯度／時區</button></div>
+        <div id="manual" class="manual" hidden>
+          <label>緯度（北正南負）<input id="lat" inputmode="decimal" placeholder="24.1417"></label>
+          <label>經度（東正西負）<input id="lon" inputmode="decimal" placeholder="120.6806"></label>
+          <label>時區<input id="tz" list="tzList" placeholder="Asia/Taipei 或 +08:00"></label>
+          <datalist id="tzList"></datalist>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" type="submit">排盤</button>
+      <span id="formError" class="error" role="alert"></span>
+    </div>
+  </form>
+
+  <section id="result" hidden>
+    <div class="card" id="summary"></div>
+    <div class="toolbar">
+      <nav class="tabs" aria-label="命盤內容">
+        <button data-tab="overview">總覽</button>
+        <button data-tab="planets">行星</button>
+        <button data-tab="houses">十二宮</button>
+        <button data-tab="vargas">分盤 D1–D60</button>
+        <button data-tab="shadbala">Shadbala</button>
+        <button data-tab="nakshatra">二十七宿</button>
+        <button data-tab="navamsa">九分盤資訊</button>
+        <button data-tab="dasha">大運／小運</button>
+      </nav>
+      <div class="style" role="radiogroup" aria-label="盤面樣式">
+        <label><input type="radio" name="style" value="south"> 南印度式</label>
+        <label><input type="radio" name="style" value="north"> 北印度式</label>
+      </div>
+    </div>
+    <div class="card">
+      <div id="tab-overview" class="tabpane"></div>
+      <div id="tab-planets" class="tabpane" hidden></div>
+      <div id="tab-houses" class="tabpane" hidden></div>
+      <div id="tab-vargas" class="tabpane" hidden></div>
+      <div id="tab-shadbala" class="tabpane" hidden></div>
+      <div id="tab-nakshatra" class="tabpane" hidden></div>
+      <div id="tab-navamsa" class="tabpane" hidden></div>
+      <div id="tab-dasha" class="tabpane" hidden></div>
+    </div>
+  </section>
+
+  <details class="card method">
+    <summary>計算方法說明</summary>
+    <ul>
+      <li>天文計算：Swiss Ephemeris（內建 Moshier 星曆，精度約 1 角秒），恆星黃道，Ayanamsa 可選 Lahiri／Raman／KP。</li>
+      <li>羅睺／計都：平均交點（Mean Node）。宮位：整宮制（Whole Sign）。</li>
+      <li>時區：依出生地 IANA 時區自動換算，含歷史夏令時；也可手動輸入固定時差。</li>
+      <li>分盤：依 Parashara（BPHS）規則。D2 為 Parashara Hora（只落巨蟹／獅子）；D30 偶數星座落金牛、處女、雙魚、摩羯、天蠍。分盤度數＝黃經 × N 取 30 餘數。</li>
+      <li>Shadbala：依 BPHS。Saptavargaja 在本命盤看 Moolatrikona 度數範圍、分盤只看星座；Drekkana 力男性星第一、中性星第二、女性星第三 decanate；年／月主星以 Kali Yuga 起算的 Ahargana 推算；日、時主星以日出為界。不同軟體在細項上常有差異。</li>
+      <li>Vimshottari：以月亮星宿起運，一年 365.2425 日；五層：大運、中運、小運、小小運（Sookshma）、Prana。</li>
+      <li>日出日落：太陽上緣＋大氣折射（-0.833°）。</li>
+    </ul>
+    <p class="note">本站原始碼採 AGPL-3.0 授權（因使用 Swiss Ephemeris 的 AGPL 版本）。所有計算都在你的瀏覽器中進行，出生資料不會傳到任何伺服器。</p>
+  </details>
+</main>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

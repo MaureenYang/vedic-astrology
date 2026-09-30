@@ -1,0 +1,18 @@
+import { loadSwe } from './node-setup.mjs';
+import { computeChart } from '../js/chart.js';
+import { localToUtc, msToJd, fmtLocal } from '../js/time.js';
+import { PLANETS, SIGNS } from '../js/constants.js';
+const swe = await loadSwe();
+const { utcMs, offsetMin } = localToUtc({ year: 1988, month: 7, day: 19, hour: 23, minute: 30 }, 'Asia/Taipei');
+const c = computeChart(swe, { jd: msToJd(utcMs), lat: 24.1417, lon: 120.6806, ayanamsa: 1, offsetMin, gender: 'F' });
+console.log('ayan', c.ayanamsaValue.toFixed(4), 'asc', SIGNS[c.asc.sign], c.asc.deg.toFixed(2), 'offset', offsetMin);
+for (const p of c.planets) console.log(PLANETS[p.id], SIGNS[p.sign], p.deg.toFixed(2), 'H'+p.house, p.nakshatra.zh+p.nakshatra.pada, p.avastha.en, 'rel', p.relation, p.combust?'combust':'', p.shadbala?.toFixed(1));
+console.log('angles', c.angles.map(a=>a.key+' '+SIGNS[a.sign]+' '+a.deg.toFixed(1)).join(', '));
+console.log('timeLords', Object.entries(c.timeLords).map(([k,v])=>k+':'+PLANETS[v]).join(' '), 'isDay', c.sun.isDay, 'sunrise', fmtLocal(c.sun.sunriseToday, offsetMin), 'sunset', fmtLocal(c.sun.sunsetToday, offsetMin));
+const keys=['uchcha','saptavargaja','ojayugma','kendradi','drekkana','sthana','dig','nathonnatha','paksha','tribhaga','vmdh','ayana','kala','cheshta','naisargika','drik','total','ratio'];
+for (const k of keys) console.log(k.padEnd(13), [0,1,2,3,4,5,6].map(p=>c.shadbala[p][k].toFixed(2).padStart(8)).join(''));
+console.log('cheshta', [2,3,4,5,6].map(p=>PLANETS[p]+c.shadbala[p].cheshtaState).join(' '));
+for (const v of c.vargas) console.log(v.code, 'ASC', SIGNS[v.ascSign], v.planets.map(p=>PLANETS[p.id]+SIGNS[p.sign].slice(0,2)+p.house).join(' '));
+console.log('MD', c.dashas.map(d=>PLANETS[d.lord]+fmtLocal(d.start,0,false)).join(' '));
+console.log('nav', JSON.stringify({v:c.navamsaInfo.vargottama, p:c.navamsaInfo.pushkara.map(i=>PLANETS[i])}), c.navamsaInfo.n64.map(o=>(PLANETS[o.id]||'上升')+SIGNS[o.sign]).join(' '));
+console.log('houses', c.houses.map(h=>h.house+SIGNS[h.sign].slice(0,2)+':'+h.bhavaBala.total.toFixed(0)).join(' '));
