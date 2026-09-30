@@ -124,8 +124,8 @@ export function buildSheets(c) {
   const status = (p) => [p.exalt && '廟旺', p.debil && '落陷', p.own && '本宮', p.mt && 'MT'].filter(Boolean).join(' ');
   const vrows = [['分盤', '分盤名稱', '星曜', '狀態', '宮位', '星座', '分盤度數']];
   c.vargas.forEach((v) => {
-    vrows.push([v.code, `${v.name}（${v.sanskrit}）`, '上升', '', 1, SIGNS[v.ascSign], r2(v.ascDeg)]);
-    v.planets.forEach((p) => vrows.push([v.code, `${v.name}（${v.sanskrit}）`, PLANETS_FULL[p.id], status(p), p.house, SIGNS[p.sign], r2(p.deg)]));
+    vrows.push([v.code, `${v.name}（${v.sanskrit}）${v.extra ? '＊' : ''}`, '上升', '', 1, SIGNS[v.ascSign], r2(v.ascDeg)]);
+    v.planets.forEach((p) => vrows.push([v.code, `${v.name}（${v.sanskrit}）${v.extra ? '＊' : ''}`, PLANETS_FULL[p.id], status(p), p.house, SIGNS[p.sign], r2(p.deg)]));
   });
   sheets.push({ name: '分盤(D1-D60)', widths: [6, 26, 8, 12, 6, 10, 10], rows: vrows });
 
@@ -163,6 +163,7 @@ export function buildSheets(c) {
       ['本檔由「吠陀占星排盤」網頁產生，天文計算使用 Swiss Ephemeris（Moshier 星曆）。'],
       [`黃道：恆星黃道，Ayanamsa = ${ayanName}。宮位：整宮制。羅睺／計都：平均交點。`],
       ['分盤：依 Parashara（BPHS）。D2 為 Parashara Hora；D30 偶數星座落金牛、處女、雙魚、摩羯、天蠍。分盤度數＝黃經×N 取 30 餘數。'],
+      ['D5、D6、D8、D11 不在 Parashara 16 分盤內，採常見算法：D5 每 6°，奇數星座依序落牡羊、水瓶、射手、雙子、天秤，偶數星座依序落金牛、處女、雙魚、摩羯、天蠍；D6 每 5°，奇數星座從牡羊、偶數從天秤起算；D8 每 3.75°，本位從牡羊、固定從射手、變動從獅子起算；D11 每 30/11°，從牡羊連續循環計數。'],
       ['與宮主關係：五重關係（自然關係＋臨時關係），指行星與其所在星座宮主星的關係。'],
       ['Baladi 狀態：奇數星座 0–6° 嬰兒、6–12° 少年、12–18° 青年、18–24° 老年、24–30° 瀕死；偶數星座反向。'],
       ['Shadbala 單位為 Virupa（60 Virupa = 1 Rupa）；強度比＝總分÷最低需求，≥1 為足夠。'],

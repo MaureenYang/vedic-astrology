@@ -1,4 +1,4 @@
-// 16 張分盤（Shodashavarga），依 Parashara 規則
+// 分盤：Parashara 16 張（Shodashavarga）＋ 常用的 D5、D6、D8、D11
 import { norm, signOf, degIn, isOddSign } from './constants.js';
 
 const MOVABLE = [0, 3, 6, 9], FIXED = [1, 4, 7, 10];
@@ -11,9 +11,17 @@ const RULES = {
   2: (s, d) => (isOddSign(s) ? (d < 15 ? 4 : 3) : (d < 15 ? 3 : 4)), // 奇：獅→蟹；偶：蟹→獅
   3: (s, d) => (s + [0, 4, 8][Math.floor(d / 10)]) % 12,
   4: (s, d) => (s + [0, 3, 6, 9][Math.floor(d / 7.5)]) % 12,
+  // D5 Panchamsa：每 6°，奇數星座依序 火、土、木、水、金 的奇數星座；偶數星座依序 金、水、木、土、火 的偶數星座
+  5: (s, d) => (isOddSign(s) ? [0, 10, 8, 2, 6] : [1, 5, 11, 9, 7])[Math.floor(d / 6)],
+  // D6 Shashthamsa：每 5°，奇數星座從牡羊起、偶數星座從天秤起
+  6: (s, d) => ((isOddSign(s) ? 0 : 6) + Math.floor(d / 5)) % 12,
   7: (s, d) => ((isOddSign(s) ? s : s + 6) + Math.floor(d / (30 / 7))) % 12,
+  // D8 Ashtamsa：每 3.75°，本位星座從牡羊起、固定星座從射手起、變動星座從獅子起
+  8: (s, d) => ([0, 8, 4][modality(s)] + Math.floor(d / 3.75)) % 12,
   9: (s, d) => ([0, 9, 6, 3][element(s)] + Math.floor(d / (30 / 9))) % 12,
   10: (s, d) => ((isOddSign(s) ? s : s + 8) + Math.floor(d / 3)) % 12,
+  // D11 Rudramsa／Ekadasamsa：每 30/11°，從牡羊起連續計數（Parivritti 循環法）
+  11: (s, d) => (s * 11 + Math.floor(d / (30 / 11))) % 12,
   12: (s, d) => (s + Math.floor(d / 2.5)) % 12,
   16: (s, d) => ([0, 4, 8][modality(s)] + Math.floor(d / 1.875)) % 12,
   20: (s, d) => ([0, 8, 4][modality(s)] + Math.floor(d / 1.5)) % 12,
@@ -35,9 +43,13 @@ export const VARGAS = [
   [2, 'D2', 'Hora', '財富盤'],
   [3, 'D3', 'Drekkana', '兄弟盤'],
   [4, 'D4', 'Chaturthamsa', '家宅盤'],
+  [5, 'D5', 'Panchamsa', '權力地位名聲盤', true],
+  [6, 'D6', 'Shashthamsa', '健康疾病盤', true],
   [7, 'D7', 'Saptamsa', '子女盤'],
+  [8, 'D8', 'Ashtamsa', '意外突發盤', true],
   [9, 'D9', 'Navamsa', '九分盤／婚姻'],
   [10, 'D10', 'Dasamsa', '事業盤'],
+  [11, 'D11', 'Rudramsa', '收穫利益盤', true],
   [12, 'D12', 'Dwadasamsa', '父母盤'],
   [16, 'D16', 'Shodasamsa', '車乘享樂盤'],
   [20, 'D20', 'Vimsamsa', '靈修盤'],
@@ -47,7 +59,7 @@ export const VARGAS = [
   [40, 'D40', 'Khavedamsa', '母系業力盤'],
   [45, 'D45', 'Akshavedamsa', '父系業力盤'],
   [60, 'D60', 'Shashtiamsa', '總業力盤'],
-].map(([n, code, sa, zh]) => ({ n, code, sanskrit: sa, name: zh }));
+].map(([n, code, sa, zh, extra = false]) => ({ n, code, sanskrit: sa, name: zh, extra }));
 
 export function vargaSign(n, lon) {
   return RULES[n](signOf(lon), degIn(lon));

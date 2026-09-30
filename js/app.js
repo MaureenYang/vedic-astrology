@@ -241,17 +241,25 @@ function render() {
   showTab(state.tab);
 }
 
+const VARGA_METHOD = {
+  5: '每 6° 一分，奇數星座依序落牡羊、水瓶、射手、雙子、天秤；偶數星座依序落金牛、處女、雙魚、摩羯、天蠍',
+  6: '每 5° 一分，奇數星座從牡羊起算、偶數星座從天秤起算',
+  8: '每 3.75° 一分，本位星座從牡羊、固定星座從射手、變動星座從獅子起算',
+  11: '每 30/11° 一分，從牡羊起連續循環計數（Parivritti）',
+};
+
 function renderVargas() {
   const c = chart;
   const v = c.vargas.find((x) => x.n === state.varga);
   const tol = v.tolerance;
   const status = (p) => [p.exalt && '廟旺', p.debil && '落陷', p.own && '本宮', p.mt && 'MT'].filter(Boolean).join(' ') || '—';
   $('#tab-vargas').innerHTML = `
-    <div class="vargapick">${c.vargas.map((x) => `<button class="chip${x.n === state.varga ? ' on' : ''}" data-varga="${x.n}">${x.code} ${x.name}</button>`).join('')}</div>
+    <div class="vargapick">${c.vargas.map((x) => `<button class="chip${x.n === state.varga ? ' on' : ''}" data-varga="${x.n}">${x.code} ${x.name}${x.extra ? '＊' : ''}</button>`).join('')}</div>
     <div class="vargamain">
       <figure>${drawChart(state.style, v, { title: `${v.code} ${v.name}`, size: 380 })}</figure>
       <div>
         <h3>${v.code} ${v.sanskrit}｜${v.name}</h3>
+        ${v.extra ? `<p class="note">＊此分盤不在 Parashara 的 16 張標準分盤內，各家算法不同；本站採用：${VARGA_METHOD[v.n]}</p>` : ''}
         <p class="tol">分盤上升：${SIGNS[v.ascSign]} ${v.ascDeg.toFixed(1)}°<br>
         出生時間提早 <b>${tol.before.toFixed(1)}</b> 分鐘或延後 <b>${tol.after.toFixed(1)}</b> 分鐘，此分盤上升星座就會改變${Math.min(tol.before, tol.after) < 5 ? '　<span class="warn">⚠ 對出生時間非常敏感</span>' : ''}</p>
         ${table(['行星', '狀態', '宮位', '星座', '分盤度數'], v.planets.map((p) => [PF(p.id), status(p), p.house, SIGNS[p.sign], p.deg.toFixed(1) + '°']))}
