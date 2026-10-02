@@ -1,8 +1,8 @@
 // 把命盤整理成 Excel 工作表（方便交給 Claude 或其他工具解讀）
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202609301609';
-import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202609301609';
-import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202609301609';
-import { makeXlsx } from './xlsx.js?v=202609301609';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610020939';
+import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610020939';
+import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610020939';
+import { makeXlsx } from './xlsx.js?v=202610020939';
 
 const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
@@ -34,6 +34,7 @@ export function buildSheets(c) {
       ['出生地', m.placeName],
       ['緯度', r4(m.lat)], ['經度', r4(m.lon)], ['時區', typeof m.tz === 'string' ? m.tz : fmtOffset(off)],
       ['Ayanamsa', `${ayanName}（${c.ayanamsaValue.toFixed(4)}°）`],
+      ['Dasha 一年天數', c.dashaYearDays],
       ['黃道', '恆星黃道（Sidereal）'], ['宮位制', '整宮制（Whole Sign）'], ['羅睺／計都', '平均交點（Mean Node）'],
       ['上升星座（Lagna）', `${SIGNS[c.asc.sign]} ${fmtDeg(c.asc.lon)}`],
       ['上升星宿', `${c.asc.nakshatra.zh}宿 ${c.asc.nakshatra.name} 第${c.asc.nakshatra.pada}足（宿主 ${PLANETS[c.asc.nakshatra.lord]}）`],
@@ -137,7 +138,7 @@ export function buildSheets(c) {
   });
 
   // 10–13. 運程
-  const dRow = (chain, p) => [...chain.map((x) => PLANETS[x]), PLANETS[p.lord], fmtLocal(p.start, off), fmtLocal(p.end, off), chain.length < 2 ? r2((p.end - p.start) / 365.2425) : r2(p.end - p.start), now >= p.start && now < p.end ? '← 目前' : ''];
+  const dRow = (chain, p) => [...chain.map((x) => PLANETS[x]), PLANETS[p.lord], fmtLocal(p.start, off), fmtLocal(p.end, off), chain.length < 2 ? r2((p.end - p.start) / c.dashaYearDays) : r2(p.end - p.start), now >= p.start && now < p.end ? '← 目前' : ''];
   const levelSheet = (name, depth, filter) => {
     const head = [...LEVEL_NAMES.slice(0, depth + 1), '開始（當地時間）', '結束（當地時間）', depth < 2 ? '長度（年）' : '長度（日）', ''];
     const rows = [head];
@@ -168,7 +169,7 @@ export function buildSheets(c) {
       ['Baladi 狀態：奇數星座 0–6° 嬰兒、6–12° 少年、12–18° 青年、18–24° 老年、24–30° 瀕死；偶數星座反向。'],
       ['Shadbala 單位為 Virupa（60 Virupa = 1 Rupa）；強度比＝總分÷最低需求，≥1 為足夠。'],
       ['Bhava Bala：宮主星 Shadbala＋宮位方位力＋行星對宮中點的相位力。'],
-      ['Vimshottari：以月亮星宿起運，一年 365.2425 日；日期為出生地當地時間。Prana 只列出匯出時所在大運。'],
+      [`Vimshottari：以月亮星宿起運，一年 ${c.dashaYearDays} 天；日期為出生地當地時間。Prana 只列出匯出時所在大運。`],
       ['分盤總表的時間誤差容忍：出生時間提早／延後幾分鐘，該分盤上升星座會改變；數字越小越需要精確出生時間。'],
     ],
     headerRows: [0],

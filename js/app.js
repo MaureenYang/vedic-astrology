@@ -1,13 +1,13 @@
-import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202609301609';
-import { computeChart } from './chart.js?v=202609301609';
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202609301609';
-import { drawChart } from './render.js?v=202609301609';
-import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202609301609';
-import { CITIES } from './cities.js?v=202609301609';
-import { exportXlsx } from './export.js?v=202609301609';
+import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610020939';
+import { computeChart } from './chart.js?v=202610020939';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610020939';
+import { drawChart } from './render.js?v=202610020939';
+import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610020939';
+import { CITIES } from './cities.js?v=202610020939';
+import { exportXlsx } from './export.js?v=202610020939';
 import {
-  SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
-} from './constants.js?v=202609301609';
+  SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, DASHA_YEAR_OPTIONS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
+} from './constants.js?v=202610020939';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -102,12 +102,13 @@ function readForm() {
     lat, lon, tz, tzLabel: tzRaw,
     placeName: $('#place').value.trim() || `${lat}, ${lon}`,
     ayanamsa: +$('#ayanamsa').value,
+    dashaYearDays: +$('#dashaYear').value,
   };
 }
 
 function toHash(f) {
   const p = new URLSearchParams({
-    d: $('#date').value, t: $('#time').value, g: f.gender, p: f.placeName, lat: f.lat, lon: f.lon, tz: f.tzLabel, a: f.ayanamsa,
+    d: $('#date').value, t: $('#time').value, g: f.gender, p: f.placeName, lat: f.lat, lon: f.lon, tz: f.tzLabel, a: f.ayanamsa, y: f.dashaYearDays,
   });
   return '#' + p.toString();
 }
@@ -123,6 +124,7 @@ function fromHash() {
   $('#lon').value = p.get('lon') || '';
   $('#tz').value = p.get('tz') || '';
   $('#ayanamsa').value = p.get('a') || '1';
+  if (p.get('y') && $(`#dashaYear option[value="${p.get('y')}"]`)) $('#dashaYear').value = p.get('y');
   $('#placeInfo').textContent = p.get('lat') ? `緯度 ${p.get('lat')}、經度 ${p.get('lon')}｜時區 ${p.get('tz')}` : '';
   return true;
 }
@@ -135,7 +137,7 @@ async function run() {
   if (!swe) { err.textContent = '計算引擎載入中，請稍候…'; await ready; err.textContent = ''; }
   const { utcMs, offsetMin } = localToUtc(f.birth, f.tz);
   const jd = msToJd(utcMs);
-  chart = computeChart(swe, { jd, lat: f.lat, lon: f.lon, ayanamsa: f.ayanamsa, offsetMin, gender: f.gender });
+  chart = computeChart(swe, { jd, lat: f.lat, lon: f.lon, ayanamsa: f.ayanamsa, offsetMin, gender: f.gender, dashaYearDays: f.dashaYearDays });
   chart.meta = { ...f, offsetMin };
   history.replaceState(null, '', toHash(f));
   render();
@@ -341,7 +343,7 @@ function renderDasha() {
       <p>目前（${fmtLocal(msToJd(Date.now()), c.meta.offsetMin)}）：${path.map((p, i) => `${LEVEL_NAMES[i]} ${PF(p.lord)}`).join(' → ') || '不在此 120 年週期內'}</p>
       <button class="btn small" id="jumpNow">展開目前運程</button>
     </div>
-    <p class="note">Vimshottari，一年以 365.2425 日計；日期時間為出生地當地時間。點任一列可往下展開：大運 → 中運 → 小運 → 小小運 → Prana。</p>
+    <p class="note">Vimshottari，一年以 ${c.dashaYearDays} 天計；日期時間為出生地當地時間。點任一列可往下展開：大運 → 中運 → 小運 → 小小運 → Prana。</p>
     <div id="dashaTree" class="dtree"></div>`;
   attachDasha($('#dashaTree'), c.dashas, 0, []);
   $('#jumpNow').addEventListener('click', openCurrent);
@@ -363,10 +365,12 @@ const ready = (async () => {
 
 function init() {
   $('#ayanamsa').innerHTML = AYANAMSAS.map((a) => `<option value="${a.id}">${a.name}</option>`).join('');
+  $('#dashaYear').innerHTML = DASHA_YEAR_OPTIONS.map((o) => `<option value="${o.days}">${o.name}</option>`).join('');
   initPlaceSearch();
   document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
   $('#form').addEventListener('submit', (e) => { e.preventDefault(); run(); });
   $('#ayanamsa').addEventListener('change', () => chart && run());
+  $('#dashaYear').addEventListener('change', () => chart && run());
   $('#exportBtn').addEventListener('click', async () => {
     if (!chart) return;
     const btn = $('#exportBtn');

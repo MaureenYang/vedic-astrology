@@ -1,11 +1,11 @@
 // 排盤主程式：輸入出生資料，輸出所有命盤資訊
 import {
   SIGN_LORD, EXALT_SIGN, DEBIL_SIGN, DEEP_EXALT, OWN_SIGNS, MOOLATRIKONA, NATURAL, COMBUST, MEAN_MOTION,
-  NAKSHATRAS, NAK_SPAN, NAISARGIKA, REQUIRED_BALA, SWE_BODY, SWE_MEAN_NODE, DASHA_ORDER,
+  NAKSHATRAS, NAK_SPAN, NAISARGIKA, REQUIRED_BALA, SWE_BODY, SWE_MEAN_NODE, DASHA_ORDER, DASHA_YEAR_DAYS,
   SU, MO, MA, ME, JU, VE, SA, RA, KE, SEVEN, norm, signOf, degIn, angDist, houseFrom, isOddSign,
-} from './constants.js?v=202609301609';
-import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js?v=202609301609';
-import { mahadashas } from './dasha.js?v=202609301609';
+} from './constants.js?v=202610020939';
+import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js?v=202610020939';
+import { mahadashas } from './dasha.js?v=202610020939';
 
 const FLG_MOSEPH = 4, FLG_SPEED = 256, FLG_EQUATORIAL = 2048, FLG_SIDEREAL = 65536;
 const rad = Math.PI / 180;
@@ -82,7 +82,7 @@ export function baladi(sign, deg) {
 // ---------- 主函式 ----------
 
 export function computeChart(swe, input) {
-  const { jd, lat, lon, ayanamsa, offsetMin, gender } = input;
+  const { jd, lat, lon, ayanamsa, offsetMin, gender, dashaYearDays = DASHA_YEAR_DAYS } = input;
   swe.setSiderealMode(ayanamsa);
   const ayan = swe.getAyanamsa(jd);
 
@@ -306,7 +306,7 @@ export function computeChart(swe, input) {
     };
   });
 
-  const dashas = mahadashas(P[MO].lon, jd);
+  const dashas = mahadashas(P[MO].lon, jd, dashaYearDays);
 
   return {
     input, ayanamsaValue: ayan,
@@ -323,6 +323,6 @@ export function computeChart(swe, input) {
     timeLords: { varsha: varshaLord, masa: masaLord, dina: dinaLord, hora: horaLord },
     sun: { sunrise: polar ? null : (vedicDayOffset ? null : sunriseToday), sunriseToday, sunsetToday, isDay, vedicWeekday, civilWeekday },
     moonPhase: { elong, waxing },
-    gender,
+    gender, dashaYearDays,
   };
 }

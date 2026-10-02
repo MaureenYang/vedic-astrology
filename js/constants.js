@@ -47,7 +47,14 @@ export const MEAN_MOTION = { [MA]: 0.5240, [ME]: 0.9856, [JU]: 0.0831, [VE]: 0.9
 // Vimshottari
 export const DASHA_ORDER = [KE, VE, SU, MO, MA, RA, JU, SA, ME];
 export const DASHA_YEARS = { [KE]: 7, [VE]: 20, [SU]: 6, [MO]: 10, [MA]: 7, [RA]: 18, [JU]: 16, [SA]: 19, [ME]: 17 };
-export const DASHA_YEAR_DAYS = 365.2425;
+// Dasha 一年的天數（可在表單選擇）
+export const DASHA_YEAR_OPTIONS = [
+  { days: 365.24219, name: '365.24219 天（回歸年）' },
+  { days: 360, name: '360 天（Savana 年）' },
+  { days: 359.017, name: '359.017 天' },
+  { days: 354.37, name: '354.37 天（太陰年）' },
+];
+export const DASHA_YEAR_DAYS = DASHA_YEAR_OPTIONS[0].days;
 
 export const NAKSHATRAS = [
   ['Ashwini', '婁'], ['Bharani', '胃'], ['Krittika', '昴'], ['Rohini', '畢'], ['Mrigashira', '觜'], ['Ardra', '參'],

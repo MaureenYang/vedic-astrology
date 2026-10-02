@@ -12,7 +12,7 @@
 - 20 張分盤：Parashara 16 張 D1～D60，加上 D5、D6、D8、D11（非 Parashara 標準，採常見算法），南印度式／北印度式，並標示出生時間誤差容忍度
 - Shadbala 六力全部細項
 - 二十七宿、九分盤資訊（Vargottama、Pushkara、64th Navamsa、年月日時主宰星）
-- Vimshottari：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana，並標出目前所在的運
+- Vimshottari：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana，並標出目前所在的運；一年天數可選 365.24219／360／359.017／354.37
 - Ayanamsa：Lahiri／Raman／KP
 - **匯出 Excel**：一鍵下載 .xlsx（14 張工作表：基本資料、十二宮、行星、四軸點、Shadbala、二十七宿、九分盤資訊、分盤長表與總表、大運中運、小運、小小運、目前大運的 Prana、欄位說明），方便交給 Claude 解讀
 - 出生地：台灣 22 縣市與 368 鄉鎮市區（中文）＋全球約 7,000 個城市；也可手動輸入經緯度與時區（含歷史夏令時）

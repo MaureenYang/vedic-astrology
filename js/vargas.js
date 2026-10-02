@@ -1,5 +1,5 @@
 // 分盤：Parashara 16 張（Shodashavarga）＋ 常用的 D5、D6、D8、D11
-import { norm, signOf, degIn, isOddSign } from './constants.js?v=202609301609';
+import { norm, signOf, degIn, isOddSign } from './constants.js?v=202610020939';
 
 const MOVABLE = [0, 3, 6, 9], FIXED = [1, 4, 7, 10];
 const modality = (s) => (MOVABLE.includes(s) ? 0 : FIXED.includes(s) ? 1 : 2); // 0 本位 1 固定 2 變動

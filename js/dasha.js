@@ -1,17 +1,17 @@
 // Vimshottari 運程：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana
-import { DASHA_ORDER, DASHA_YEARS, DASHA_YEAR_DAYS, NAK_SPAN, norm } from './constants.js?v=202609301609';
+import { DASHA_ORDER, DASHA_YEARS, DASHA_YEAR_DAYS, NAK_SPAN, norm } from './constants.js?v=202610020939';
 
 export const LEVEL_NAMES = ['大運', '中運', '小運', '小小運', 'Prana'];
 export const LEVEL_SANSKRIT = ['Mahadasha', 'Antardasha', 'Pratyantardasha', 'Sookshma', 'Prana'];
 
 // 回傳出生時的大運起點（可能早於出生）與第一個大運行星
-export function dashaStart(moonLon, birthJd) {
+export function dashaStart(moonLon, birthJd, yearDays = DASHA_YEAR_DAYS) {
   const m = norm(moonLon);
   const nak = Math.floor(m / NAK_SPAN);
   const lordIdx = nak % 9;
   const elapsed = (m % NAK_SPAN) / NAK_SPAN;
   const lord = DASHA_ORDER[lordIdx];
-  const startJd = birthJd - elapsed * DASHA_YEARS[lord] * DASHA_YEAR_DAYS;
+  const startJd = birthJd - elapsed * DASHA_YEARS[lord] * yearDays;
   return { startJd, lordIdx, balanceYears: (1 - elapsed) * DASHA_YEARS[lord] };
 }
 
@@ -31,9 +31,9 @@ export function subPeriods(startJd, endJd, firstIdx) {
 }
 
 // 大運列表（一輪 120 年）
-export function mahadashas(moonLon, birthJd) {
-  const { startJd, lordIdx } = dashaStart(moonLon, birthJd);
-  return subPeriods(startJd, startJd + 120 * DASHA_YEAR_DAYS, lordIdx);
+export function mahadashas(moonLon, birthJd, yearDays = DASHA_YEAR_DAYS) {
+  const { startJd, lordIdx } = dashaStart(moonLon, birthJd, yearDays);
+  return subPeriods(startJd, startJd + 120 * yearDays, lordIdx);
 }
 
 // 某一期的下一層（每層都從該期主星開始）
