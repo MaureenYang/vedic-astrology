@@ -1,13 +1,13 @@
-import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610020939';
-import { computeChart } from './chart.js?v=202610020939';
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610020939';
-import { drawChart } from './render.js?v=202610020939';
-import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610020939';
-import { CITIES } from './cities.js?v=202610020939';
-import { exportXlsx } from './export.js?v=202610020939';
+import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610031551';
+import { computeChart } from './chart.js?v=202610031551';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610031551';
+import { drawChart } from './render.js?v=202610031551';
+import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610031551';
+import { CITIES } from './cities.js?v=202610031551';
+import { exportXlsx } from './export.js?v=202610031551';
 import {
   SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, DASHA_YEAR_OPTIONS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
-} from './constants.js?v=202610020939';
+} from './constants.js?v=202610031551';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -248,6 +248,10 @@ const VARGA_METHOD = {
   6: '每 5° 一分，奇數星座從牡羊起算、偶數星座從天秤起算',
   8: '每 3.75° 一分，本位星座從牡羊、固定星座從射手、變動星座從獅子起算',
   11: '每 30/11° 一分，從牡羊起連續循環計數（Parivritti）',
+  19: '每 30/19° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
+  23: '每 30/23° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
+  25: '每 30/25° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
+  50: '每 30/50° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
 };
 
 function renderVargas() {

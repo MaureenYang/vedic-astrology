@@ -9,7 +9,7 @@
 - 四軸點：ASC／DSC／MC／IC
 - 行星表：星座、度數、宮位、星宿與 Pada、落陷／廟旺／Moolatrikona／本宮、燃燒、逆行、同宮、敵友、Baladi 狀態、Shadbala、速率
 - 十二宮：宮主、宮內行星、Bhava Bala
-- 20 張分盤：Parashara 16 張 D1～D60，加上 D5、D6、D8、D11（非 Parashara 標準，採常見算法），南印度式／北印度式，並標示出生時間誤差容忍度
+- 24 張分盤：Parashara 16 張 D1～D60，加上 D5、D6、D8、D11（非 Parashara 標準，採常見算法），以及 D19、D23、D25、D50（古典無記載，Parivritti 循環法，僅供參考），南印度式／北印度式，並標示出生時間誤差容忍度
 - Shadbala 六力全部細項
 - 二十七宿、九分盤資訊（Vargottama、Pushkara、64th Navamsa、年月日時主宰星）
 - Vimshottari：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana，並標出目前所在的運；一年天數可選 365.24219／360／359.017／354.37

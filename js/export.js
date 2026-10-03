@@ -1,8 +1,8 @@
 // 把命盤整理成 Excel 工作表（方便交給 Claude 或其他工具解讀）
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610020939';
-import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610020939';
-import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610020939';
-import { makeXlsx } from './xlsx.js?v=202610020939';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610031551';
+import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610031551';
+import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610031551';
+import { makeXlsx } from './xlsx.js?v=202610031551';
 
 const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
@@ -165,6 +165,7 @@ export function buildSheets(c) {
       [`黃道：恆星黃道，Ayanamsa = ${ayanName}。宮位：整宮制。羅睺／計都：平均交點。`],
       ['分盤：依 Parashara（BPHS）。D2 為 Parashara Hora；D30 偶數星座落金牛、處女、雙魚、摩羯、天蠍。分盤度數＝黃經×N 取 30 餘數。'],
       ['D5、D6、D8、D11 不在 Parashara 16 分盤內，採常見算法：D5 每 6°，奇數星座依序落牡羊、水瓶、射手、雙子、天秤，偶數星座依序落金牛、處女、雙魚、摩羯、天蠍；D6 每 5°，奇數星座從牡羊、偶數從天秤起算；D8 每 3.75°，本位從牡羊、固定從射手、變動從獅子起算；D11 每 30/11°，從牡羊連續循環計數。'],
+      ['D19、D23、D25、D50：古典文獻沒有記載算法與主看事項，本站以 Parivritti 循環法（每 30/N°，從牡羊起連續循環計數）計算，僅供參考，不宜作為主要論斷依據。'],
       ['與宮主關係：五重關係（自然關係＋臨時關係），指行星與其所在星座宮主星的關係。'],
       ['Baladi 狀態：奇數星座 0–6° 嬰兒、6–12° 少年、12–18° 青年、18–24° 老年、24–30° 瀕死；偶數星座反向。'],
       ['Shadbala 單位為 Virupa（60 Virupa = 1 Rupa）；強度比＝總分÷最低需求，≥1 為足夠。'],

@@ -1,5 +1,5 @@
 // Vimshottari 運程：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana
-import { DASHA_ORDER, DASHA_YEARS, DASHA_YEAR_DAYS, NAK_SPAN, norm } from './constants.js?v=202610020939';
+import { DASHA_ORDER, DASHA_YEARS, DASHA_YEAR_DAYS, NAK_SPAN, norm } from './constants.js?v=202610031551';
 
 export const LEVEL_NAMES = ['大運', '中運', '小運', '小小運', 'Prana'];
 export const LEVEL_SANSKRIT = ['Mahadasha', 'Antardasha', 'Pratyantardasha', 'Sookshma', 'Prana'];

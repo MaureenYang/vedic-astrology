@@ -1,11 +1,14 @@
-// 分盤：Parashara 16 張（Shodashavarga）＋ 常用的 D5、D6、D8、D11
-import { norm, signOf, degIn, isOddSign } from './constants.js?v=202610020939';
+// 分盤：Parashara 16 張（Shodashavarga）＋ 常用的 D5、D6、D8、D11 ＋ D19、D23、D25、D50（Parivritti）
+import { norm, signOf, degIn, isOddSign } from './constants.js?v=202610031551';
 
 const MOVABLE = [0, 3, 6, 9], FIXED = [1, 4, 7, 10];
 const modality = (s) => (MOVABLE.includes(s) ? 0 : FIXED.includes(s) ? 1 : 2); // 0 本位 1 固定 2 變動
 const element = (s) => s % 4; // 0 火 1 土 2 風 3 水
 
 // 每張分盤：由恆星黃經算出分盤星座
+// Parivritti 循環法：從牡羊座第 1 份起，把 12 個星座的所有等分連續計數
+const parivritti = (n, s, d) => (s * n + Math.floor(d / (30 / n))) % 12;
+
 const RULES = {
   1: (s) => s,
   2: (s, d) => (isOddSign(s) ? (d < 15 ? 4 : 3) : (d < 15 ? 3 : 4)), // 奇：獅→蟹；偶：蟹→獅
@@ -21,7 +24,12 @@ const RULES = {
   9: (s, d) => ([0, 9, 6, 3][element(s)] + Math.floor(d / (30 / 9))) % 12,
   10: (s, d) => ((isOddSign(s) ? s : s + 8) + Math.floor(d / 3)) % 12,
   // D11 Rudramsa／Ekadasamsa：每 30/11°，從牡羊起連續計數（Parivritti 循環法）
-  11: (s, d) => (s * 11 + Math.floor(d / (30 / 11))) % 12,
+  11: (s, d) => parivritti(11, s, d),
+  // D19、D23、D25、D50：古典無記載，同樣採 Parivritti 循環法
+  19: (s, d) => parivritti(19, s, d),
+  23: (s, d) => parivritti(23, s, d),
+  25: (s, d) => parivritti(25, s, d),
+  50: (s, d) => parivritti(50, s, d),
   12: (s, d) => (s + Math.floor(d / 2.5)) % 12,
   16: (s, d) => ([0, 4, 8][modality(s)] + Math.floor(d / 1.875)) % 12,
   20: (s, d) => ([0, 8, 4][modality(s)] + Math.floor(d / 1.5)) % 12,
@@ -52,12 +60,16 @@ export const VARGAS = [
   [11, 'D11', 'Rudramsa', '收穫利益盤', true],
   [12, 'D12', 'Dwadasamsa', '父母盤'],
   [16, 'D16', 'Shodasamsa', '車乘享樂盤'],
+  [19, 'D19', 'Parivritti', '十九分盤', true],
   [20, 'D20', 'Vimsamsa', '靈修盤'],
+  [23, 'D23', 'Parivritti', '二十三分盤', true],
   [24, 'D24', 'Chaturvimsamsa', '學識盤'],
+  [25, 'D25', 'Parivritti', '二十五分盤', true],
   [27, 'D27', 'Bhamsa', '體力盤'],
   [30, 'D30', 'Trimsamsa', '災厄盤'],
   [40, 'D40', 'Khavedamsa', '母系業力盤'],
   [45, 'D45', 'Akshavedamsa', '父系業力盤'],
+  [50, 'D50', 'Parivritti', '五十分盤', true],
   [60, 'D60', 'Shashtiamsa', '總業力盤'],
 ].map(([n, code, sa, zh, extra = false]) => ({ n, code, sanskrit: sa, name: zh, extra }));
 

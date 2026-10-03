@@ -1,5 +1,5 @@
 // 命盤繪圖（SVG）：南印度式（星座固定）與北印度式（宮位固定）
-import { SIGNS_SHORT, PLANETS } from './constants.js?v=202610020939';
+import { SIGNS_SHORT, PLANETS } from './constants.js?v=202610031551';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
