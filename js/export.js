@@ -1,8 +1,8 @@
 // 把命盤整理成 Excel 工作表（方便交給 Claude 或其他工具解讀）
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610031551';
-import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610031551';
-import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610031551';
-import { makeXlsx } from './xlsx.js?v=202610031551';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121631';
+import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610121631';
+import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610121631';
+import { makeXlsx } from './xlsx.js?v=202610121631';
 
 const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
@@ -120,6 +120,29 @@ export function buildSheets(c) {
       ['', PLANETS_FULL[c.timeLords.varsha], PLANETS_FULL[c.timeLords.masa], PLANETS_FULL[c.timeLords.dina], PLANETS_FULL[c.timeLords.hora]],
     ],
   });
+
+  // Ashtakavarga
+  const a = c.ashtaka;
+  const order = Array.from({ length: 12 }, (_, i) => (c.asc.sign + i) % 12);
+  const sum = (arr) => arr.reduce((x, y) => x + y, 0);
+  sheets.push({
+    name: 'Ashtakavarga', widths: [14, ...Array(12).fill(9), 8], headerRows: [0, 1],
+    rows: [
+      ['', ...order.map((_, i) => `${i + 1}宮`), '合計'],
+      ['星座', ...order.map((sg) => SIGNS[sg]), ''],
+      ...[0, 1, 2, 3, 4, 5, 6].map((p) => [`${PLANETS_FULL[p]} BAV`, ...order.map((sg) => a.bav[p][sg]), sum(a.bav[p])]),
+      [{ v: 'SAV 總點', bold: true }, ...order.map((sg) => ({ v: a.sav[sg], bold: true })), { v: a.total, bold: true }],
+      [],
+      ['說明：依 BPHS 得點表；8 個貢獻者為日、月、火、水、木、金、土、上升；未做 Trikona／Ekadhipatya 削減。SAV 平均約 28，≥28 一般視為強宮、<25 為弱宮；各星 BAV ≥5 佳、≤2 弱。'],
+    ],
+  });
+  const CONTRIB = ['日', '月', '火', '水', '木', '金', '土', '上升'];
+  const prows = [['行星', '貢獻者', ...order.map((sg, i) => `${i + 1}宮 ${SIGNS[sg]}`), '小計']];
+  [0, 1, 2, 3, 4, 5, 6].forEach((p) => {
+    a.prastara[p].forEach((row, k) => prows.push([PLANETS_FULL[p], CONTRIB[k], ...order.map((sg) => row[sg]), sum(row)]));
+    prows.push([{ v: PLANETS_FULL[p], bold: true }, { v: 'BAV', bold: true }, ...order.map((sg) => ({ v: a.bav[p][sg], bold: true })), { v: sum(a.bav[p]), bold: true }]);
+  });
+  sheets.push({ name: 'Ashtakavarga明細', widths: [8, 8, ...Array(12).fill(11), 6], rows: prows });
 
   // 8. 分盤（長表）
   const status = (p) => [p.exalt && '廟旺', p.debil && '落陷', p.own && '本宮', p.mt && 'MT'].filter(Boolean).join(' ');

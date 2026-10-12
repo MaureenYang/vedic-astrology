@@ -50,6 +50,11 @@ children(ju).forEach((d, i) => check(`木星大運／${PLANETS[d.lord]} 中運�
 const XLSX_PAD_JU = ['2025-03-07', '2025-06-19', '2025-10-21', '2026-02-08', '2026-03-25', '2026-08-02', '2026-09-10', '2026-11-14', '2026-12-30'];
 children(children(ju)[0]).forEach((d, i) => check(`木/木/${PLANETS[d.lord]} 小運起點(UT)`, fmtLocal(d.start, 0, false), XLSX_PAD_JU[i]));
 
+// Ashtakavarga：各星總點固定（BPHS）
+const BAV_WANT = [48, 49, 39, 54, 56, 52, 39];
+c.ashtaka.bav.forEach((row, p) => check(`${PLANETS[p]} BAV 總點`, row.reduce((x, y) => x + y, 0), BAV_WANT[p]));
+check('SAV 總點', c.ashtaka.total, 337);
+
 // Shadbala 總分（容許 ±15%，因各軟體細項算法不同）
 const XLSX_SB = [466.7, 411.8, 363.4, 284.2, 398.4, 337.6, 395.3];
 const sbRows = XLSX_SB.map((w, p) => `${PLANETS[p]} ${c.shadbala[p].total.toFixed(1)} vs ${w}`);

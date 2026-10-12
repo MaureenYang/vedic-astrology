@@ -1,5 +1,5 @@
 // 命盤繪圖（SVG）：南印度式（星座固定）與北印度式（宮位固定）
-import { SIGNS_SHORT, PLANETS } from './constants.js?v=202610031551';
+import { SIGNS_SHORT, PLANETS } from './constants.js?v=202610121631';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -20,9 +20,12 @@ function planetLines(items, x, y, w, maxPerRow, fontSize, lineH) {
   }).join('');
 }
 
+const valueText = (v, x, y, size) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" class="bindu${v >= 28 ? ' hi' : v < 25 ? ' lo' : ''}" font-size="${size / 13}">${v}</text>`;
+
 const SOUTH_POS = [[0, 1], [0, 2], [0, 3], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1], [3, 0], [2, 0], [1, 0], [0, 0]]; // [row, col] 依星座
 
-export function southChart(varga, { size = 360, title = '', showDeg = false } = {}) {
+// values：依星座給數字（例如 Ashtakavarga 點數），有給就顯示數字而不是行星
+export function southChart(varga, { size = 360, title = '', showDeg = false, values = null } = {}) {
   const c = size / 4;
   const groups = groupBySign(varga, showDeg);
   let cells = '';
@@ -33,13 +36,13 @@ export function southChart(varga, { size = 360, title = '', showDeg = false } = 
     cells += `<rect x="${x}" y="${y}" width="${c}" height="${c}" class="cell${isAsc ? ' asc' : ''}"/>`;
     cells += `<text x="${x + 5}" y="${y + 14}" class="signlbl">${SIGNS_SHORT[s]}</text>`;
     if (isAsc) cells += `<line x1="${x}" y1="${y + c * 0.28}" x2="${x + c * 0.28}" y2="${y}" class="ascline"/><text x="${x + c - 5}" y="${y + 14}" text-anchor="end" class="asclbl">上升</text>`;
-    cells += planetLines(groups[s], x + c / 2, y + c / 2 + 6, c, 3, size / 22, size / 17);
+    cells += values ? valueText(values[s], x + c / 2, y + c / 2 + 6, size) : planetLines(groups[s], x + c / 2, y + c / 2 + 6, c, 3, size / 22, size / 17);
   }
   const center = `<text x="${size / 2}" y="${size / 2 - 8}" text-anchor="middle" class="ctitle">${esc(title)}</text><text x="${size / 2}" y="${size / 2 + 14}" text-anchor="middle" class="csub">南印度式</text>`;
   return `<svg viewBox="0 0 ${size} ${size}" class="chart" role="img" aria-label="${esc(title)}"><rect x="0" y="0" width="${size}" height="${size}" class="frame"/>${cells}<rect x="${c}" y="${c}" width="${2 * c}" height="${2 * c}" class="center"/>${center}</svg>`;
 }
 
-export function northChart(varga, { size = 360, title = '', showDeg = false } = {}) {
+export function northChart(varga, { size = 360, title = '', showDeg = false, values = null } = {}) {
   const W = size, h = W / 2, q = W / 4;
   const A = [0, 0], B = [W, 0], C = [W, W], D = [0, W], T = [h, 0], R = [W, h], Bm = [h, W], L = [0, h], O = [h, h];
   const P1 = [q, q], P2 = [3 * q, q], P3 = [3 * q, 3 * q], P4 = [q, 3 * q];
@@ -56,7 +59,7 @@ export function northChart(varga, { size = 360, title = '', showDeg = false } = 
     const t = big ? 0.62 : 0.55;
     const nx = cx + (near[0] - cx) * t, ny = cy + (near[1] - cy) * t;
     out += `<text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="middle" class="signnum">${sign + 1}</text>`;
-    out += planetLines(groups[sign], cx, cy + (big ? -4 : 0), 0, big ? 3 : 2, size / (big ? 22 : 25), size / 18);
+    out += values ? valueText(values[sign], cx, cy + (big ? -4 : 0), size) : planetLines(groups[sign], cx, cy + (big ? -4 : 0), 0, big ? 3 : 2, size / (big ? 22 : 25), size / 18);
   });
   return `<svg viewBox="0 0 ${W} ${W}" class="chart north" role="img" aria-label="${esc(title)}"><rect x="0" y="0" width="${W}" height="${W}" class="frame"/>${out}<text x="${h}" y="${W - 6}" text-anchor="middle" class="csub">${esc(title)}・北印度式</text></svg>`;
 }

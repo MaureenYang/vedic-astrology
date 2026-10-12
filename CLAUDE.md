@@ -9,7 +9,8 @@
 - `js/app.js`：表單、出生地搜尋、各分頁的顯示；輸入存在網址 hash，可直接分享
 - `js/chart.js`：排盤主程式（行星、宮位、分盤、Shadbala、Bhava Bala、九分盤資訊、時間主宰星）
 - `js/vargas.js`：24 張分盤規則（Parashara 16 張＋D5/D6/D8/D11＋D19/D23/D25/D50 Parivritti）；`js/dasha.js`：Vimshottari 五層；`js/time.js`：時區換算
-- `js/render.js`：南印度式／北印度式 SVG 盤面
+- `js/render.js`：南印度式／北印度式 SVG 盤面（也能顯示 Ashtakavarga 點數）
+- `js/ashtakavarga.js`：BPHS 得點表，各星總點固定 48/49/39/54/56/52/39（共 337）
 - `js/cities.js`：城市資料（產生後的靜態檔）
 - `js/export.js`：把命盤整理成 Excel 工作表；`js/xlsx.js`：不依賴外部套件的 XLSX 產生器（瀏覽器內建 CompressionStream 壓縮）
 - `vendor/swisseph/`：Swiss Ephemeris WebAssembly（`@swisseph/browser` 1.4.0，AGPL），Moshier 星曆

@@ -1,13 +1,13 @@
-import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610031551';
-import { computeChart } from './chart.js?v=202610031551';
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610031551';
-import { drawChart } from './render.js?v=202610031551';
-import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610031551';
-import { CITIES } from './cities.js?v=202610031551';
-import { exportXlsx } from './export.js?v=202610031551';
+import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610121631';
+import { computeChart } from './chart.js?v=202610121631';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121631';
+import { drawChart } from './render.js?v=202610121631';
+import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610121631';
+import { CITIES } from './cities.js?v=202610121631';
+import { exportXlsx } from './export.js?v=202610121631';
 import {
   SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, DASHA_YEAR_OPTIONS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
-} from './constants.js?v=202610031551';
+} from './constants.js?v=202610121631';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -238,6 +238,7 @@ function render() {
     <h3>時間主宰星</h3>
     ${table(['年（Varsha）', '月（Masa）', '日（Dina）', '時（Hora）'], [[c.timeLords.varsha, c.timeLords.masa, c.timeLords.dina, c.timeLords.hora].map(PF)])}`;
 
+  renderAshtaka();
   renderVargas();
   renderDasha();
   showTab(state.tab);
@@ -253,6 +254,37 @@ const VARGA_METHOD = {
   25: '每 30/25° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
   50: '每 30/50° 一分，從牡羊起連續循環計數（Parivritti）。古典文獻沒有這張分盤的算法與主看事項，僅供參考',
 };
+
+function renderAshtaka() {
+  const c = chart, a = c.ashtaka;
+  const d1 = c.vargas.find((x) => x.n === 1);
+  const seven = [0, 1, 2, 3, 4, 5, 6];
+  const ascS = c.asc.sign;
+  const signOrder = Array.from({ length: 12 }, (_, i) => (ascS + i) % 12);
+  const cls = (v, hi, lo) => (v >= hi ? 'good' : v < lo ? 'weak' : '');
+  const byHouse = table(
+    ['', ...signOrder.map((s, i) => `${i + 1}宮<br><small>${SIGNS[s].slice(0, 2)}</small>`), '合計'],
+    [
+      ...seven.map((p) => [PF(p), ...signOrder.map((s) => `<span class="${cls(a.bav[p][s], 5, 3)}">${a.bav[p][s]}</span>`), a.bav[p].reduce((x, y) => x + y, 0)]),
+      ['<b>SAV 總點</b>', ...signOrder.map((s) => `<b class="${cls(a.sav[s], 28, 25)}">${a.sav[s]}</b>`), `<b>${a.total}</b>`],
+    ], 'num');
+  const prastara = seven.map((p) => `<details><summary>${PF(p)} 的 Prastara 明細（${a.bav[p].reduce((x, y) => x + y, 0)} 點）</summary>${table(
+    ['貢獻者', ...signOrder.map((s, i) => `${i + 1}宮 ${SIGNS[s].slice(0, 2)}`), '小計'],
+    [...a.prastara[p].map((row, k) => [['日', '月', '火', '水', '木', '金', '土', '上升'][k], ...signOrder.map((s) => (row[s] ? '●' : '')), row.reduce((x, y) => x + y, 0)]),
+      ['<b>BAV</b>', ...signOrder.map((s) => `<b>${a.bav[p][s]}</b>`), `<b>${a.bav[p].reduce((x, y) => x + y, 0)}</b>`]], 'num')}</details>`).join('');
+  $('#tab-ashtaka').innerHTML = `
+    <div class="charts2">
+      <figure>${drawChart(state.style, d1, { title: 'SAV 總點', values: a.sav })}</figure>
+      <figure>${drawChart(state.style, d1, { title: 'D1 本命盤', showDeg: true })}</figure>
+    </div>
+    <h3>各星點數（Bhinnashtakavarga）與總點（Sarvashtakavarga），依宮位排列</h3>
+    ${byHouse}
+    <p class="note">一般參考：SAV 總點 ≥ 28 為強宮（綠）、&lt; 25 為弱宮（紅），平均約 28；各星 BAV ≥ 5 為佳、≤ 2 為弱。依 BPHS 得點表計算，未做 Trikona／Ekadhipatya 削減。</p>
+    <h3>各星分點圖</h3>
+    <div class="vargagrid">${seven.map((p) => `<figure>${drawChart(state.style, d1, { title: `${PLANETS_FULL[p]} BAV`, values: a.bav[p], size: 300 })}</figure>`).join('')}</div>
+    <h3>Prastara 明細（哪個貢獻者給了點）</h3>
+    ${prastara}`;
+}
 
 function renderVargas() {
   const c = chart;

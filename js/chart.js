@@ -3,9 +3,10 @@ import {
   SIGN_LORD, EXALT_SIGN, DEBIL_SIGN, DEEP_EXALT, OWN_SIGNS, MOOLATRIKONA, NATURAL, COMBUST, MEAN_MOTION,
   NAKSHATRAS, NAK_SPAN, NAISARGIKA, REQUIRED_BALA, SWE_BODY, SWE_MEAN_NODE, DASHA_ORDER, DASHA_YEAR_DAYS,
   SU, MO, MA, ME, JU, VE, SA, RA, KE, SEVEN, norm, signOf, degIn, angDist, houseFrom, isOddSign,
-} from './constants.js?v=202610031551';
-import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js?v=202610031551';
-import { mahadashas } from './dasha.js?v=202610031551';
+} from './constants.js?v=202610121631';
+import { VARGAS, vargaSign, vargaDegree, vargaTimeTolerance } from './vargas.js?v=202610121631';
+import { ashtakavarga } from './ashtakavarga.js?v=202610121631';
+import { mahadashas } from './dasha.js?v=202610121631';
 
 const FLG_MOSEPH = 4, FLG_SPEED = 256, FLG_EQUATORIAL = 2048, FLG_SIDEREAL = 65536;
 const rad = Math.PI / 180;
@@ -306,6 +307,7 @@ export function computeChart(swe, input) {
     };
   });
 
+  const ashtaka = ashtakavarga(signs, ascSign);
   const dashas = mahadashas(P[MO].lon, jd, dashaYearDays);
 
   return {
@@ -323,6 +325,6 @@ export function computeChart(swe, input) {
     timeLords: { varsha: varshaLord, masa: masaLord, dina: dinaLord, hora: horaLord },
     sun: { sunrise: polar ? null : (vedicDayOffset ? null : sunriseToday), sunriseToday, sunsetToday, isDay, vedicWeekday, civilWeekday },
     moonPhase: { elong, waxing },
-    gender, dashaYearDays,
+    gender, dashaYearDays, ashtaka,
   };
 }
