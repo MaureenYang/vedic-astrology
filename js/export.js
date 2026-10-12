@@ -1,8 +1,8 @@
 // 把命盤整理成 Excel 工作表（方便交給 Claude 或其他工具解讀）
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121631';
-import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610121631';
-import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610121631';
-import { makeXlsx } from './xlsx.js?v=202610121631';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121634';
+import { fmtLocal, fmtOffset, msToJd } from './time.js?v=202610121634';
+import { SIGNS, PLANETS, PLANETS_FULL, PLANETS_EN, NAKSHATRAS, NAK_SPAN, AYANAMSAS, RELATION_LABEL, DASHA_ORDER, fmtDeg } from './constants.js?v=202610121634';
+import { makeXlsx } from './xlsx.js?v=202610121634';
 
 const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
@@ -133,7 +133,7 @@ export function buildSheets(c) {
       ...[0, 1, 2, 3, 4, 5, 6].map((p) => [`${PLANETS_FULL[p]} BAV`, ...order.map((sg) => a.bav[p][sg]), sum(a.bav[p])]),
       [{ v: 'SAV 總點', bold: true }, ...order.map((sg) => ({ v: a.sav[sg], bold: true })), { v: a.total, bold: true }],
       [],
-      ['說明：依 BPHS 得點表；8 個貢獻者為日、月、火、水、木、金、土、上升；未做 Trikona／Ekadhipatya 削減。SAV 平均約 28，≥28 一般視為強宮、<25 為弱宮；各星 BAV ≥5 佳、≤2 弱。'],
+      ['說明：依 BPHS 得點表；8 個貢獻者為日、月、火、水、木、金、土、上升；此表為削減前原始點數（削減見「Ashtakavarga削減」）。SAV 平均約 28，≥28 一般視為強宮、<25 為弱宮；各星 BAV ≥5 佳、≤2 弱。'],
     ],
   });
   const CONTRIB = ['日', '月', '火', '水', '木', '金', '土', '上升'];
@@ -142,6 +142,18 @@ export function buildSheets(c) {
     a.prastara[p].forEach((row, k) => prows.push([PLANETS_FULL[p], CONTRIB[k], ...order.map((sg) => row[sg]), sum(row)]));
     prows.push([{ v: PLANETS_FULL[p], bold: true }, { v: 'BAV', bold: true }, ...order.map((sg) => ({ v: a.bav[p][sg], bold: true })), { v: sum(a.bav[p]), bold: true }]);
   });
+  const rrows = [['行星', '步驟', ...order.map((sg, i) => `${i + 1}宮 ${SIGNS[sg]}`), '合計']];
+  [0, 1, 2, 3, 4, 5, 6].forEach((p) => {
+    const r = a.reduced[p];
+    [['原始 BAV', a.bav[p]], ['Trikona 削減後', r.trikona], ['Ekadhipatya 削減後', r.ekadhipatya]]
+      .forEach(([k, row]) => rrows.push([PLANETS_FULL[p], k, ...order.map((sg) => row[sg]), sum(row)]));
+  });
+  rrows.push([]);
+  rrows.push(['行星', 'Rasi Pinda', 'Graha Pinda', 'Shodhya Pinda']);
+  [0, 1, 2, 3, 4, 5, 6].forEach((p) => { const k = a.reduced[p].pinda; rrows.push([PLANETS_FULL[p], k.rasi, k.graha, k.total]); });
+  rrows.push([]);
+  rrows.push(['規則：Trikona（同三方有 0 不減、三個相同全歸 0、否則各減最小值）→ Ekadhipatya（同主星兩星座依有無行星削減，巨蟹獅子除外）。Shodhya Pinda＝Rasi Pinda（星座倍數 7,10,8,4,10,5,7,8,9,5,11,12）＋Graha Pinda（行星倍數 日5 月5 火8 水5 木10 金7 土5）。依 B.V. Raman《Ashtakavarga System》。']);
+  sheets.push({ name: 'Ashtakavarga削減', widths: [8, 18, ...Array(12).fill(11), 6], headerRows: [0, 23], rows: rrows });
   sheets.push({ name: 'Ashtakavarga明細', widths: [8, 8, ...Array(12).fill(11), 6], rows: prows });
 
   // 8. 分盤（長表）

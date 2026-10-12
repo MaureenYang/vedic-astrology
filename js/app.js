@@ -1,13 +1,13 @@
-import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610121631';
-import { computeChart } from './chart.js?v=202610121631';
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121631';
-import { drawChart } from './render.js?v=202610121631';
-import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610121631';
-import { CITIES } from './cities.js?v=202610121631';
-import { exportXlsx } from './export.js?v=202610121631';
+import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610121634';
+import { computeChart } from './chart.js?v=202610121634';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121634';
+import { drawChart } from './render.js?v=202610121634';
+import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610121634';
+import { CITIES } from './cities.js?v=202610121634';
+import { exportXlsx } from './export.js?v=202610121634';
 import {
   SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, DASHA_YEAR_OPTIONS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
-} from './constants.js?v=202610121631';
+} from './constants.js?v=202610121634';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -279,7 +279,13 @@ function renderAshtaka() {
     </div>
     <h3>各星點數（Bhinnashtakavarga）與總點（Sarvashtakavarga），依宮位排列</h3>
     ${byHouse}
-    <p class="note">一般參考：SAV 總點 ≥ 28 為強宮（綠）、&lt; 25 為弱宮（紅），平均約 28；各星 BAV ≥ 5 為佳、≤ 2 為弱。依 BPHS 得點表計算，未做 Trikona／Ekadhipatya 削減。</p>
+    <p class="note">一般參考：SAV 總點 ≥ 28 為強宮（綠）、&lt; 25 為弱宮（紅），平均約 28；各星 BAV ≥ 5 為佳、≤ 2 為弱。依 BPHS 得點表計算；上表為削減前的原始點數。</p>
+    <h3>削減後（Trikona → Ekadhipatya Shodhana）與 Shodhya Pinda</h3>
+    ${table(['', ...signOrder.map((s, i) => `${i + 1}宮<br><small>${SIGNS[s].slice(0, 2)}</small>`), '合計', 'Rasi Pinda', 'Graha Pinda', '<b>Shodhya Pinda</b>'],
+      seven.map((p) => { const r = a.reduced[p]; return [PF(p), ...signOrder.map((s) => r.ekadhipatya[s] || '<small>0</small>'), r.ekadhipatya.reduce((x, y) => x + y, 0), r.pinda.rasi, r.pinda.graha, `<b>${r.pinda.total}</b>`]; }), 'num')}
+    ${seven.map((p) => { const r = a.reduced[p]; return `<details><summary>${PF(p)} 削減過程</summary>${table(['步驟', ...signOrder.map((s, i) => `${i + 1}宮 ${SIGNS[s].slice(0, 2)}`), '合計'],
+      [['原始 BAV', a.bav[p]], ['Trikona 削減後', r.trikona], ['Ekadhipatya 削減後', r.ekadhipatya]].map(([k, row]) => [k, ...signOrder.map((s) => row[s]), row.reduce((x, y) => x + y, 0)]), 'num')}</details>`; }).join('')}
+    <p class="note">Trikona：同一三方（火、土、風、水象）三個星座中有 0 不減；三個相同全歸 0；否則各減去最小值。Ekadhipatya：同一行星主管的兩個星座（巨蟹、獅子除外），依是否有行星（日～土）進一步削減。Shodhya Pinda＝Rasi Pinda（各星座點數 × 星座倍數 7,10,8,4,10,5,7,8,9,5,11,12）＋ Graha Pinda（行星所在星座點數 × 行星倍數 日5 月5 火8 水5 木10 金7 土5）。依 B.V. Raman《Ashtakavarga System》的規則。</p>
     <h3>各星分點圖</h3>
     <div class="vargagrid">${seven.map((p) => `<figure>${drawChart(state.style, d1, { title: `${PLANETS_FULL[p]} BAV`, values: a.bav[p], size: 300 })}</figure>`).join('')}</div>
     <h3>Prastara 明細（哪個貢獻者給了點）</h3>

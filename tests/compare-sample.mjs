@@ -54,6 +54,10 @@ children(children(ju)[0]).forEach((d, i) => check(`木/木/${PLANETS[d.lord]} �
 const BAV_WANT = [48, 49, 39, 54, 56, 52, 39];
 c.ashtaka.bav.forEach((row, p) => check(`${PLANETS[p]} BAV 總點`, row.reduce((x, y) => x + y, 0), BAV_WANT[p]));
 check('SAV 總點', c.ashtaka.total, 337);
+// 削減與 Pinda（範例盤手算驗證：太陽 Rasi 87、Graha 26；土星 Ekadhipatya 天秤 3→2、摩羯水瓶 2/5→2/2）
+check('太陽 Rasi Pinda', c.ashtaka.reduced[0].pinda.rasi, 87);
+check('太陽 Graha Pinda', c.ashtaka.reduced[0].pinda.graha, 26);
+check('土星 Ekadhipatya', c.ashtaka.reduced[6].ekadhipatya.join(','), '5,2,0,2,1,0,2,0,0,2,2,1');
 
 // Shadbala 總分（容許 ±15%，因各軟體細項算法不同）
 const XLSX_SB = [466.7, 411.8, 363.4, 284.2, 398.4, 337.6, 395.3];

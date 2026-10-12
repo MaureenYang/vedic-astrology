@@ -34,5 +34,63 @@ export function ashtakavarga(signs, ascSign) {
   }));
   const bav = prastara.map((rows) => Array.from({ length: 12 }, (_, s) => rows.reduce((a, r) => a + r[s], 0)));
   const sav = Array.from({ length: 12 }, (_, s) => bav.reduce((a, r) => a + r[s], 0));
-  return { prastara, bav, sav, total: sav.reduce((a, b) => a + b, 0) };
+  return { prastara, bav, sav, total: sav.reduce((a, b) => a + b, 0), reduced: reductions(bav, signs) };
+}
+
+// ---------- 削減（Shodhana）與 Shodhya Pinda，依 BPHS／B.V. Raman《Ashtakavarga System》 ----------
+
+const TRINES = [[0, 4, 8], [1, 5, 9], [2, 6, 10], [3, 7, 11]];
+// 同一行星主管的兩個星座（巨蟹、獅子各只有一個主星，不參與）
+const SAME_LORD = [[0, 7], [1, 6], [2, 5], [8, 11], [9, 10]];
+export const RASI_GUNA = [7, 10, 8, 4, 10, 5, 7, 8, 9, 5, 11, 12]; // 牡羊～雙魚
+export const GRAHA_GUNA = [5, 5, 8, 5, 10, 7, 5]; // 日 月 火 水 木 金 土
+
+// Trikona Shodhana：三方星座中有 0 不減；三個相同全歸 0；否則各減去最小值
+export function trikonaShodhana(row) {
+  const out = row.slice();
+  for (const t of TRINES) {
+    const v = t.map((s) => out[s]);
+    if (v.includes(0)) continue;
+    if (v[0] === v[1] && v[1] === v[2]) { t.forEach((s) => { out[s] = 0; }); continue; }
+    const m = Math.min(...v);
+    t.forEach((s) => { out[s] -= m; });
+  }
+  return out;
+}
+
+// Ekadhipatya Shodhana（在 Trikona 之後）：occupied[s] = 該星座有行星（日～土）
+// - 任一星座為 0，或兩個都有行星：不減
+// - 兩個都沒有行星：相同則都歸 0；不同則較大的減成較小的
+// - 一個有行星、一個沒有：沒有行星那格若 ≤ 有行星那格，歸 0；若較大，減成與有行星那格相同
+export function ekadhipatyaShodhana(row, occupied) {
+  const out = row.slice();
+  for (const [a, b] of SAME_LORD) {
+    const va = out[a], vb = out[b];
+    if (va === 0 || vb === 0) continue;
+    const oa = occupied[a], ob = occupied[b];
+    if (oa && ob) continue;
+    if (!oa && !ob) {
+      if (va === vb) { out[a] = 0; out[b] = 0; } else { const m = Math.min(va, vb); out[a] = m; out[b] = m; }
+      continue;
+    }
+    const [occ, emp] = oa ? [a, b] : [b, a];
+    out[emp] = out[emp] <= out[occ] ? 0 : out[occ];
+  }
+  return out;
+}
+
+export function shodhyaPinda(reduced, signs) {
+  const rasi = reduced.reduce((acc, v, s) => acc + v * RASI_GUNA[s], 0);
+  const graha = GRAHA_GUNA.reduce((acc, g, p) => acc + reduced[signs[p]] * g, 0);
+  return { rasi, graha, total: rasi + graha };
+}
+
+// 對 7 張 BAV 全部做削減並算 Shodhya Pinda
+export function reductions(bav, signs) {
+  const occupied = Array.from({ length: 12 }, (_, s) => signs.slice(0, 7).includes(s));
+  return bav.map((row) => {
+    const trikona = trikonaShodhana(row);
+    const ekadhipatya = ekadhipatyaShodhana(trikona, occupied);
+    return { trikona, ekadhipatya, pinda: shodhyaPinda(ekadhipatya, signs) };
+  });
 }

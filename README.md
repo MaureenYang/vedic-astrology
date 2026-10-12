@@ -11,7 +11,7 @@
 - 十二宮：宮主、宮內行星、Bhava Bala
 - 24 張分盤：Parashara 16 張 D1～D60，加上 D5、D6、D8、D11（非 Parashara 標準，採常見算法），以及 D19、D23、D25、D50（古典無記載，Parivritti 循環法，僅供參考），南印度式／北印度式，並標示出生時間誤差容忍度
 - Shadbala 六力全部細項
-- Ashtakavarga：各星 BAV、SAV 總點（依宮位）、Prastara 明細（依 BPHS，未削減）
+- Ashtakavarga：各星 BAV、SAV 總點（依宮位）、Prastara 明細，Trikona／Ekadhipatya 削減與 Shodhya Pinda
 - 二十七宿、九分盤資訊（Vargottama、Pushkara、64th Navamsa、年月日時主宰星）
 - Vimshottari：大運 → 中運 → 小運 → 小小運（Sookshma）→ Prana，並標出目前所在的運；一年天數可選 365.24219／360／359.017／354.37
 - Ayanamsa：Lahiri／Raman／KP
