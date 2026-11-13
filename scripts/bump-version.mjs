@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const v = new Date().toISOString().replace(/\D/g, '').slice(0, 12);
 const stamp = (s) => s.replace(/((?:href|src)="(?:css|js)\/[\w.-]+\.(?:css|js)|from '\.{1,2}\/[\w./-]+\.js|import\('\.{1,2}\/[\w./-]+\.js)(\?v=\w+)?/g, `$1?v=${v}`);
 
-const files = ['index.html', ...readdirSync(root + 'js').filter((f) => f.endsWith('.js')).map((f) => 'js/' + f)];
+const files = ['index.html', 'qimen.html', ...readdirSync(root + 'js').filter((f) => f.endsWith('.js')).map((f) => 'js/' + f)];
 for (const f of files) {
   const p = root + f;
   const before = readFileSync(p, 'utf8');
