@@ -1,13 +1,13 @@
-import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202611132341';
-import { computeChart } from './chart.js?v=202611132341';
-import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202611132341';
-import { drawChart } from './render.js?v=202611132341';
-import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202611132341';
-import { CITIES } from './cities.js?v=202611132341';
-import { exportXlsx } from './export.js?v=202611132341';
+import { SwissEphemeris } from '../vendor/swisseph/swisseph-browser.js?v=202610121634';
+import { computeChart } from './chart.js?v=202610121634';
+import { children, currentPath, LEVEL_NAMES } from './dasha.js?v=202610121634';
+import { drawChart } from './render.js?v=202610121634';
+import { localToUtc, msToJd, fmtLocal, fmtOffset } from './time.js?v=202610121634';
+import { CITIES } from './cities.js?v=202610121634';
+import { exportXlsx } from './export.js?v=202610121634';
 import {
   SIGNS, PLANETS, PLANETS_FULL, NAKSHATRAS, NAK_SPAN, AYANAMSAS, DASHA_YEAR_OPTIONS, RELATION_LABEL, SIGN_LORD, DASHA_ORDER, fmtDeg, norm,
-} from './constants.js?v=202611132341';
+} from './constants.js?v=202610121634';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
